@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-#
-# Example CLI UX Testing Script
-#
-# This script demonstrates how to test a CLI tool for UX issues.
-# Adapt this template for your specific tool.
 
-set -e  # Exit on error
+# @file example-test.sh
+# @brief This script demonstrates how to test a CLI tool for UX issues.
+#        Adapt this template for your specific tool.
+# @usage ./example-test.sh
+# @author Alister Lewis-Bowen <alister@lewis-bowen.org>
 
-# Colors for output
+set -e
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
