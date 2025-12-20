@@ -1,0 +1,36 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Thumbnails
+Thumbs.db
+
+# Backup files
+*.backup
+*.bak
+*~
+
+# Test outputs
+*.log
+test-results/
+test-reports/
+
+# Asciinema recordings (if generated during testing)
+*.cast
+*.gif
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
