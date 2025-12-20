@@ -1,24 +1,20 @@
 #!/usr/bin/env bash
-#
-# Install script for CLI UX Tester skill
-#
-# This script installs the cli-ux-tester skill to your personal Claude skills directory.
-#
-# Usage:
-#   ./install.sh           # Install to default location
-#   ./install.sh --update  # Update existing installation
-#
 
-set -e  # Exit on error
+# @file Install script for CLI UX Tester skill
+# @brief This script installs the cli-ux-tester skill to your personal Claude
+#        skills directory.
+# @usage ./install.sh           # Install to default location
+#        ./install.sh --update  # Update existing installation
+# @author Alister Lewis-Bowen <alister@lewis-bowen.org>
 
-# Colors for output
+set -e
+
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# Default installation directory
 INSTALL_DIR="${HOME}/.claude/skills/cli-ux-tester"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILL_SOURCE="${SCRIPT_DIR}/skill"

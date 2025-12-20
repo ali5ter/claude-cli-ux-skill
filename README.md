@@ -4,13 +4,34 @@ A comprehensive UX evaluation skill for command-line interfaces (CLIs), develope
 
 ## Overview
 
-This skill enables Claude to act as an expert UX designer specializing in command-line interface usability and developer experience. It provides structured testing frameworks, comprehensive checklists, and automated evaluation capabilities for any CLI tool or developer-facing API.
+This skill enables Claude to act as an expert UX designer specializing in command-line interface usability and developer experience. It provides structured testing frameworks, comprehensive checklists, and automated evaluation capabilities for CLI tools and developer-facing APIs.
+
+**Language Agnostic:** This skill evaluates the *user-facing behavior* of CLIs, not their implementation. The UX evaluation framework applies universally to command-line tools regardless of the programming language or framework used to build them.
+
+### What This Skill Evaluates
+
+**In Scope (UX/DX):**
+
+- ✅ User-facing behavior (help text, error messages, output formatting)
+- ✅ Developer experience (discoverability, learnability, consistency)
+- ✅ Accessibility and inclusivity
+- ✅ Bash best practices that affect UX (error handling, exit codes, signal handling)
+
+**Out of Scope (Code Quality):**
+
+- ❌ Internal code quality or architecture
+- ❌ Language-specific coding style (unless it impacts UX)
+- ❌ Bash scripting best practices unrelated to UX (e.g., `set -e`, variable quoting)
+- ❌ Performance optimization internals (though responsiveness is evaluated)
+
+**Note:** For Bash script code review (not UX), use general code review. This skill focuses solely on the user and developer experience.
 
 ## Features
 
 ### 🎯 Automatic Activation
 
 The skill automatically activates when you mention:
+
 - CLI, command-line, terminal, bash, shell
 - UX testing, usability, developer experience
 - Error messages, help systems, documentation
@@ -19,6 +40,7 @@ The skill automatically activates when you mention:
 ### 📊 8-Criteria UX Framework
 
 Evaluates CLIs across 8 key dimensions (rated 1-5):
+
 1. **Discovery & Discoverability** - Can users find features?
 2. **Command & API Naming** - Are names intuitive and consistent?
 3. **Error Handling & Messages** - Are errors clear and actionable?
@@ -30,10 +52,10 @@ Evaluates CLIs across 8 key dimensions (rated 1-5):
 
 ### 🧪 Active Testing Capabilities
 
-- **Executes actual commands** to test behavior
+- **Executes actual commands** to test real behavior
 - **Captures and analyzes output** for UX issues
 - **Tests error scenarios** (missing args, invalid flags, etc.)
-- **Records sessions** with asciinema (if available)
+- **Records sessions** with asciinema (if available) to capture visual output
 - **Generates detailed reports** with specific findings and recommendations
 
 ### 📋 Comprehensive Resources
@@ -81,20 +103,24 @@ Once installed, the skill works automatically across all your Claude Code sessio
 ### Example Prompts
 
 **General UX Review:**
-```
+
+```prompt
 Review this CLI for UX issues
 ```
 
 **Specific Focus:**
-```
+
+```prompt
 Test the error messages in this tool
 Evaluate the help system
 Check command discoverability
-Analyze the spinner commands for usability
+Analyze the progress indicators for usability
+Review the subcommand structure
 ```
 
 **Testing Workflows:**
-```
+
+```prompt
 Test this CLI with common error scenarios
 Record a session and analyze the UX
 Check if this API is developer-friendly
@@ -105,6 +131,7 @@ Check if this API is developer-friendly
 When you ask about CLI UX, the skill will:
 
 1. **Execute commands** to test actual behavior
+
    ```bash
    command --help
    command --version
@@ -112,50 +139,53 @@ When you ask about CLI UX, the skill will:
    ```
 
 2. **Read documentation and source code**
+
    - README files
    - Help text
    - Implementation details
 
 3. **Apply the 8-criteria framework**
+
    - Rate each criterion 1-5
    - Provide specific evidence
    - Note strengths and issues
 
 4. **Generate actionable recommendations**
+
    - Quick wins (easy + high impact)
    - Strategic improvements
    - Code examples showing before/after
 
 ### Example Interaction
 
-```
-You: Review pfb's spinner commands for UX issues
+```text
+You: Review this deployment CLI's command structure for UX issues
 
-Claude: I'll conduct a comprehensive UX evaluation of pfb's spinner functionality.
+Claude: I'll conduct a comprehensive UX evaluation of your deployment CLI.
 
 [Executes commands and analyzes output]
 
-## UX Evaluation: pfb Spinner Commands
+## UX Evaluation: Deployment CLI
 
 ### Overall Score: 4.2/5
 
 ### Executive Summary
 **Strengths:**
-- Clear, semantic command naming (spinner start/stop)
-- Excellent backward compatibility
-- Smooth visual feedback
+- Clear, semantic command naming (deploy, rollback, status)
+- Excellent help system with examples
+- Smooth progress feedback during deployments
 
 **Issues:**
-- No --help flag for spinner subcommand
-- Limited documentation of manual start/stop workflow
-- No progress percentage option
+- No --help flag for environment subcommands
+- Inconsistent flag naming between commands
+- No confirmation prompt for destructive operations
 
 [... detailed analysis with examples and recommendations ...]
 ```
 
 ## What's Included
 
-```
+```text
 claude-cli-ux-skill/
 ├── README.md                    # This file
 ├── CLAUDE.md                    # Context for working on this skill
@@ -171,22 +201,45 @@ claude-cli-ux-skill/
 
 ## Configuration
 
-The skill uses these tools when available:
-- **Bash** - Execute commands and capture output
-- **Read** - Read source code and documentation
-- **Grep** - Search for patterns in code
-- **Glob** - Find files by pattern
-- **Write** - Create test reports
+### Claude Code Tools
 
-Optional tools (if installed):
-- **asciinema** - Record terminal sessions
-- **agg** - Convert recordings to GIF
+The skill uses these **Claude Code built-in tools** when testing:
+
+- **Bash** - Execute commands and capture output
+- **Read** - Read source code and documentation files
+- **Grep** - Search for patterns in code
+- **Glob** - Find files by pattern matching
+- **Write** - Create test reports and documentation
+
+These tools are part of Claude Code and require no additional setup.
+
+### Optional External Tools
+
+If available on your system, the skill can use:
+
+- **asciinema** - Record terminal sessions with full visual fidelity (captures colors, animations, spinners, formatting, and all visual output in real-time)
+- **agg** - Convert asciinema recordings to animated GIF format for sharing
+
+Install these tools for enhanced visual testing:
+
+```bash
+# macOS
+brew install asciinema agg
+
+# Ubuntu/Debian
+apt-get install asciinema
+# agg: cargo install agg
+
+# Arch
+pacman -S asciinema
+# agg: cargo install agg
+```
 
 ## Examples of Use
 
 ### Testing a New CLI Tool
 
-```
+```text
 You: I'm building a new deployment CLI. Can you review the help system?
 
 [Skill activates and tests help discovery, documentation, examples]
@@ -194,7 +247,7 @@ You: I'm building a new deployment CLI. Can you review the help system?
 
 ### Improving Error Messages
 
-```
+```text
 You: These error messages feel unclear. What would make them better?
 
 [Skill analyzes error scenarios and suggests improvements with examples]
@@ -202,7 +255,7 @@ You: These error messages feel unclear. What would make them better?
 
 ### API Design Review
 
-```
+```text
 You: Review this library's API for developer experience
 
 [Skill evaluates naming, consistency, documentation, and ergonomics]
@@ -210,9 +263,10 @@ You: Review this library's API for developer experience
 
 ## Works Across All Projects
 
-The skill is installed in your **personal** Claude directory (`~/.claude/skills/`), so it automatically works in:
-- ✅ Any CLI tool you're developing
-- ✅ Shell scripts and bash utilities
+The skill is installed in your **personal** Claude directory (`~/.claude/skills/`), so it automatically works with:
+
+- ✅ CLI tools in any programming language
+- ✅ Shell scripts and utilities
 - ✅ Developer APIs and SDKs
 - ✅ Terminal UI/TUI applications
 - ✅ Any repository with command-line interfaces
@@ -238,16 +292,26 @@ rm -rf ~/.claude/skills/cli-ux-tester
 - Bash 4.0+ (for test scripts)
 
 Optional:
+
 - [asciinema](https://asciinema.org/) - Record terminal sessions
 - [agg](https://github.com/asciinema/agg) - Convert recordings to GIF
 
 ## Contributing
 
-Contributions are welcome! This skill can be improved with:
-- Additional test scenarios
-- More comprehensive checklists
-- Better examples of good/bad CLI design
-- Support for more CLI frameworks and patterns
+Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on:
+
+- How to report issues and suggest enhancements
+- Development setup and testing workflow
+- Submitting pull requests
+- Code style and documentation standards
+
+Areas where contributions are especially valuable:
+
+- Additional test scenarios for common CLI patterns
+- More comprehensive checklist items
+- Examples of good/bad CLI design from real tools
+- Support for new CLI frameworks and patterns
+- Documentation improvements and clarifications
 
 ## License
 
@@ -259,10 +323,16 @@ This skill was created to make CLI development more user-centered by providing e
 
 ## Resources
 
+### Guidelines & Best Practices
+
 - [CLI Guidelines](https://clig.dev/) - Comprehensive CLI best practices
-- [12 Factor CLI Apps](https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46)
-- [Command Line Interface Guidelines](https://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces.html)
-- [Designing Command-Line Tools](https://pragprog.com/titles/pg_clt/designing-command-line-tools/)
+- [12 Factor CLI Apps](https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46) - Principles for building great CLIs
+- [GNU Command Line Interface Guidelines](https://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces.html) - Standards and conventions
+
+### Books
+
+- [Small Sharp Software Tools](https://pragprog.com/) by Brian P. Hogan - Building flexible command-line tools
+- [Powerful Command-Line Applications in Go](https://pragprog.com/) by Ricardo Gerardi - Go CLI development
 
 ## Acknowledgments
 
