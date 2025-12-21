@@ -328,11 +328,18 @@ This skill was created to make CLI development more user-centered by providing e
 - [CLI Guidelines](https://clig.dev/) - Comprehensive CLI best practices
 - [12 Factor CLI Apps](https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46) - Principles for building great CLIs
 - [GNU Command Line Interface Guidelines](https://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces.html) - Standards and conventions
+- [Better CLI](https://better-cli.org) - CLI Design Guide & Reference
+- [Claude Code Plugins: cli-ux-patterns](https://claude-plugins.dev/skills/@geoffjay/claude-plugins/cli-ux-patterns) - Another CLI UX skill focussed on visual evaluation.
+- [CLI UX Patterns & Best Practices](https://mcpmarket.com/tools/skills/cli-ux-patterns-best-practices) - Another lighterweight CLI UX skill.
+- [Improving CLI progress displays](https://evilmartians.com/chronicles/cli-ux-best-practices-3-patterns-for-improving-progress-displays) - What progress displays to use when.
+- [UX patterns for CLI tools](https://www.lucasfcosta.com/blog/ux-patterns-cli-tools) - Good UX patterns for CLI applications.
+- [10 design prnciples for delightful CLIs](https://www.atlassian.com/blog/it-teams/10-design-principles-for-delightful-clis) - Priciples used to build Atlassian's Forge CLI.
+- [Heroku CLI Style Guide](https://devcenter.heroku.com/articles/cli-style-guide) - Patterns used for Heroku CLI plugins.
 
 ### Books
 
-- [Small Sharp Software Tools](https://pragprog.com/) by Brian P. Hogan - Building flexible command-line tools
-- [Powerful Command-Line Applications in Go](https://pragprog.com/) by Ricardo Gerardi - Go CLI development
+- [Small Sharp Software Tools](https://pragprog.com/titles/bhcldev/small-sharp-software-tools/) by Brian P. Hogan - Building flexible command-line tools
+- [Powerful Command-Line Applications in Go](https://pragprog.com/titles/rggo/powerful-command-line-applications-in-go/) by Ricardo Gerardi - Go CLI development
 
 ## Acknowledgments
 
