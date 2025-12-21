@@ -56,12 +56,17 @@ Evaluates CLIs across 8 key dimensions (rated 1-5):
 - **Captures and analyzes output** for UX issues
 - **Tests error scenarios** (missing args, invalid flags, etc.)
 - **Records sessions** with asciinema (if available) to capture visual output
-- **Generates detailed reports** with specific findings and recommendations
+- **Generates comprehensive artifacts**:
+  - **CLI_UX_EVALUATION.md** - Detailed evaluation report with scores and findings
+  - **CLI_UX_REMEDIATION_PLAN.md** - Prioritized implementation plan
+  - **CLI_UX_EVALUATION_METRICS.json** - Machine-readable metrics for tracking
+  - **CLI_UX_EVALUATION_TEST.sh** - Automated test script
+  - **CLI_UX_EVALUATION_SESSION.cast** - Terminal session recording (if asciinema available)
 
 ### 📋 Comprehensive Resources
 
 - **Testing Checklist** - 100+ items across 10 categories
-- **Test Scenarios** - 15 common CLI testing scenarios with examples
+- **Test Scenarios** - 23 common CLI testing scenarios with examples
 - **Example Test Script** - Automated testing template
 - **Best Practices** - Guidance on good vs bad CLI design
 
@@ -130,7 +135,12 @@ Check if this API is developer-friendly
 
 When you ask about CLI UX, the skill will:
 
-1. **Execute commands** to test actual behavior
+1. **Choose evaluation approach**
+
+   - **Direct testing** for small/simple CLIs (executes in current session)
+   - **Agent-based evaluation** for large/complex CLIs (spawns fresh agents with independent token budgets for unbiased analysis)
+
+2. **Execute commands** to test actual behavior
 
    ```bash
    command --help
@@ -138,20 +148,24 @@ When you ask about CLI UX, the skill will:
    command invalid_args
    ```
 
-2. **Read documentation and source code**
+3. **Read documentation and source code**
 
    - README files
    - Help text
    - Implementation details
 
-3. **Apply the 8-criteria framework**
+4. **Apply the 8-criteria framework**
 
    - Rate each criterion 1-5
    - Provide specific evidence
    - Note strengths and issues
 
-4. **Generate actionable recommendations**
+5. **Generate comprehensive artifacts**
 
+   - **CLI_UX_EVALUATION.md** - Detailed findings and scores
+   - **CLI_UX_REMEDIATION_PLAN.md** - Prioritized implementation plan
+   - **CLI_UX_EVALUATION_METRICS.json** - Machine-readable metrics
+   - **CLI_UX_EVALUATION_TEST.sh** - Automated test suite
    - Quick wins (easy + high impact)
    - Strategic improvements
    - Code examples showing before/after
@@ -165,22 +179,29 @@ Claude: I'll conduct a comprehensive UX evaluation of your deployment CLI.
 
 [Executes commands and analyzes output]
 
-## UX Evaluation: Deployment CLI
+I've completed the evaluation and generated the following artifacts:
+
+📄 CLI_UX_EVALUATION.md - Comprehensive evaluation report
+📋 CLI_UX_REMEDIATION_PLAN.md - Prioritized implementation plan
+📊 CLI_UX_EVALUATION_METRICS.json - Machine-readable metrics
+🧪 CLI_UX_EVALUATION_TEST.sh - Automated test suite
+
+## Summary
 
 ### Overall Score: 4.2/5
 
-### Executive Summary
 **Strengths:**
 - Clear, semantic command naming (deploy, rollback, status)
 - Excellent help system with examples
 - Smooth progress feedback during deployments
 
-**Issues:**
-- No --help flag for environment subcommands
-- Inconsistent flag naming between commands
-- No confirmation prompt for destructive operations
+**Quick Wins (3 issues, ~2 hours):**
+- Add --help flag to environment subcommands
+- Add confirmation prompt for destructive operations
+- Standardize flag naming across commands
 
-[... detailed analysis with examples and recommendations ...]
+See CLI_UX_EVALUATION.md for detailed findings and CLI_UX_REMEDIATION_PLAN.md
+for the complete implementation plan with code examples.
 ```
 
 ## What's Included
@@ -194,7 +215,7 @@ claude-cli-ux-skill/
 └── skill/
     ├── SKILL.md                 # Main skill definition
     ├── testing-checklist.md     # Comprehensive testing checklist
-    ├── test-scenarios.md        # 15 common CLI testing scenarios
+    ├── test-scenarios.md        # 23 common CLI testing scenarios
     └── scripts/
         └── example-test.sh      # Automated testing template
 ```
@@ -210,6 +231,7 @@ The skill uses these **Claude Code built-in tools** when testing:
 - **Grep** - Search for patterns in code
 - **Glob** - Find files by pattern matching
 - **Write** - Create test reports and documentation
+- **Task** - Spawn specialized agents for unbiased evaluation of large/complex CLIs
 
 These tools are part of Claude Code and require no additional setup.
 

@@ -118,7 +118,8 @@ The skill has access to these Claude Code tools:
 - **Read**: Read files and documentation
 - **Grep**: Search code for patterns
 - **Glob**: Find files by pattern
-- **Write**: Create test reports (when generating critique documents)
+- **Write**: Create test reports and artifacts
+- **Task**: Spawn specialized agents for unbiased evaluation (Explore and general-purpose agents)
 
 ## The UX Testing Framework
 
@@ -134,6 +135,116 @@ The skill implements an 8-criteria framework for CLI evaluation:
 8. **Accessibility** - Language clarity, skill levels, terminal compatibility
 
 Each criterion is rated 1-5 with specific evidence from testing.
+
+## Agent-Based Evaluation Architecture
+
+The skill supports two evaluation approaches:
+
+### Direct Testing (Current Session)
+
+Used for small/simple CLIs:
+- Executes commands directly in the current session
+- Reads source code and documentation
+- Generates evaluation reports
+- Fast and efficient for straightforward cases
+
+### Agent-Based Evaluation (Fresh Sessions)
+
+Used for large/complex CLIs to ensure unbiased analysis:
+- **Exploration Agent** (`subagent_type='Explore'`):
+  - Maps codebase structure
+  - Finds CLI entry points, help text, error handling
+  - Understands command structure and patterns
+  - No bias from current conversation context
+
+- **General-Purpose Agent** (`subagent_type='general-purpose'`):
+  - Executes comprehensive test scenarios
+  - Tests all commands and flags systematically
+  - Documents actual vs expected behavior
+  - Collects evidence for each criterion
+
+### Benefits of Agent-Based Approach
+
+1. **Fresh Token Budget**: Each agent gets independent token allocation
+2. **Unbiased Evaluation**: No context bleed from current conversation
+3. **Specialized Focus**: Agents can focus on specific aspects
+4. **Parallel Processing**: Multiple agents can work concurrently
+5. **Scalability**: Handles large codebases without overwhelming current session
+
+### When to Use Which Approach
+
+**Use Direct Testing when:**
+- CLI has <10 commands
+- Simple command structure
+- Quick evaluation needed
+- Current token budget is sufficient
+
+**Use Agent-Based when:**
+- CLI has >10 commands or complex subcommand structure
+- Large codebase requiring extensive exploration
+- Need unbiased evaluation (no prior assumptions)
+- Current session has limited token budget
+- Want parallel evaluation of different aspects
+
+## Output Artifacts
+
+The skill generates a consistent set of files using the `CLI_UX_EVALUATION_*` naming convention:
+
+### Required Files
+
+1. **CLI_UX_EVALUATION.md**
+   - Comprehensive evaluation report
+   - Executive summary with overall score
+   - Detailed findings across 8 criteria
+   - Specific issues with evidence and examples
+   - Quick wins and strategic recommendations
+
+2. **CLI_UX_REMEDIATION_PLAN.md**
+   - Prioritized action items (Critical → Nice-to-have)
+   - Estimated effort for each item (Small, Medium, Large, Very Large)
+   - Dependencies between items
+   - Code changes needed with file locations
+   - Testing recommendations
+   - Migration/rollout strategy
+
+### Optional Files
+
+3. **CLI_UX_EVALUATION_METRICS.json**
+   - Machine-readable metrics for tracking improvements
+   - Scores for each criterion
+   - Issue counts by priority
+   - Effort estimates
+   - Quick wins count
+
+4. **CLI_UX_EVALUATION_TEST.sh**
+   - Automated test script based on example-test.sh
+   - Customized for the specific CLI
+   - Tests all identified scenarios
+   - Can be run repeatedly to verify fixes
+
+5. **CLI_UX_EVALUATION_SESSION.cast**
+   - asciinema recording of test session (if available)
+   - Captures visual output, colors, animations
+   - Useful for demonstrating UX issues
+
+6. **CLI_UX_EVALUATION_SUMMARY.txt**
+   - Plain text summary for quick reference
+   - Overall score and key findings
+   - Quick wins list
+   - Next steps
+
+7. **CLI_UX_EVALUATION_BEFORE_AFTER.md**
+   - Side-by-side comparisons
+   - Code examples showing improvements
+   - Visual mockups of better UX
+
+### File Naming Convention
+
+All evaluation artifacts use the `CLI_UX_EVALUATION` prefix to:
+- Keep related files together in directory listings
+- Make it easy to find all evaluation outputs
+- Allow easy cleanup with `rm CLI_UX_EVALUATION_*`
+- Enable gitignore patterns if needed
 
 ## Common Development Tasks
 
@@ -172,6 +283,41 @@ If the skill isn't activating when expected:
 3. Ensure proper exit code handling
 4. Keep output colorful and clear
 5. Update comments and documentation
+
+### Testing Agent-Based Evaluation
+
+1. Find a large/complex CLI project to test with
+2. Ask Claude: "Review this CLI for UX issues"
+3. Observe whether it uses direct testing or spawns agents
+4. Verify the Task tool is called with appropriate subagent_type
+5. Check that all output artifacts are generated correctly
+6. Validate the CLI_UX_EVALUATION_*.* naming convention
+
+### Validating Output Artifacts
+
+1. Ensure CLI_UX_EVALUATION.md exists and is comprehensive
+2. Verify CLI_UX_REMEDIATION_PLAN.md has prioritized action items
+3. Check CLI_UX_EVALUATION_METRICS.json is valid JSON with correct structure
+4. Test CLI_UX_EVALUATION_TEST.sh script runs successfully
+5. Confirm all files use the CLI_UX_EVALUATION prefix
+
+### Testing with Different CLI Sizes
+
+**Small CLI (Direct Testing)**:
+- Simple tool with <10 commands
+- Should execute directly in current session
+- Fast evaluation without spawning agents
+
+**Medium CLI (Either Approach)**:
+- 10-30 commands or moderate complexity
+- May use either approach based on context
+- Test both paths work correctly
+
+**Large CLI (Agent-Based)**:
+- >30 commands or complex subcommand structure
+- Should spawn Explore and general-purpose agents
+- Verify agents coordinate correctly
+- Check that findings are synthesized properly
 
 ## Installation Flow
 
@@ -242,6 +388,10 @@ Tag releases in git for users to reference stable versions.
 5. **Keep it actionable**: Always suggest specific improvements
 6. **Stay tool-agnostic**: Work with any CLI, not just specific frameworks
 7. **Document edge cases**: Handle TTY detection, missing tools gracefully
+8. **Generate consistent artifacts**: Always use CLI_UX_EVALUATION_* naming convention
+9. **Choose appropriate evaluation approach**: Use direct testing for simple CLIs, agent-based for complex ones
+10. **Coordinate agents effectively**: When using multiple agents, synthesize their findings clearly
+11. **Provide machine-readable output**: Include metrics.json for tracking improvements over time
 
 ## Troubleshooting
 
@@ -257,6 +407,24 @@ Tag releases in git for users to reference stable versions.
 
 **Scripts not executable?**
 - The installer should handle this, but manually: `chmod +x skill/scripts/*.sh`
+
+**Agent-based evaluation not working?**
+- Verify the Task tool is available in Claude Code
+- Check that SKILL.md correctly documents agent usage
+- Ensure agents are being called with correct subagent_type ('Explore' or 'general-purpose')
+- Review agent prompts for clarity and completeness
+
+**Output artifacts not generated?**
+- Check that Write tool calls use CLI_UX_EVALUATION_* prefix
+- Verify file paths are correct (relative to project root)
+- Ensure SKILL.md documents all required artifacts
+- Test with a simple CLI first to debug
+
+**Agents not coordinating properly?**
+- Review the agent prompts in SKILL.md
+- Ensure agents return structured output that can be synthesized
+- Check that the main session waits for agents to complete
+- Verify TaskOutput tool is used correctly to retrieve agent results
 
 ## Contributing Guidelines
 
