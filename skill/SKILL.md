@@ -882,9 +882,40 @@ See [testing-checklist.md](testing-checklist.md) for comprehensive checklist.
 
 See [test-scenarios.md](test-scenarios.md) for common testing scenarios.
 
-## Output Format
+## Output Artifacts
 
-When conducting UX reviews, provide:
+When conducting UX evaluations, create the following files:
+
+### Required Files
+
+**CLI_UX_EVALUATION.md** - Main evaluation report containing:
+- Executive summary with scores
+- Detailed findings across 8 criteria
+- Specific issues with evidence
+- Prioritized recommendations
+- Code examples (before/after)
+
+**CLI_UX_REMEDIATION_PLAN.md** - Implementation plan containing:
+- Prioritized action items (Critical → Nice-to-have)
+- Estimated effort for each item
+- Dependencies between items
+- Code changes needed with file locations
+- Testing recommendations
+- Migration/rollout strategy
+
+### Optional Supporting Files
+
+Use `CLI_UX_EVALUATION` as prefix for all generated files:
+
+- **CLI_UX_EVALUATION_test.sh** - Generated test script for regression testing
+- **CLI_UX_EVALUATION.cast** - Asciinema recording of evaluation session
+- **CLI_UX_EVALUATION_summary.txt** - One-page executive summary
+- **CLI_UX_EVALUATION_metrics.json** - Machine-readable scores for tracking
+- **CLI_UX_EVALUATION_before_after.md** - Side-by-side improvement examples
+
+## Evaluation Report Format (CLI_UX_EVALUATION.md)
+
+Structure the evaluation report as follows:
 
 ### 1. Executive Summary
 
@@ -954,6 +985,140 @@ Try: init-command --config ./config.yml
 Or: init-command --interactive
 ```
 
+## Remediation Plan Format (CLI_UX_REMEDIATION_PLAN.md)
+
+After completing the evaluation, create a comprehensive implementation plan:
+
+### 1. Plan Overview
+
+- Total number of issues identified
+- Breakdown by priority (Critical/High/Medium/Low)
+- Estimated total effort
+- Recommended timeline
+- Success metrics
+
+### 2. Prioritized Action Items
+
+For each issue, provide:
+
+**Issue ID**: [Unique identifier, e.g., UX-001]
+
+**Title**: [Brief description]
+
+**Priority**: Critical | High | Medium | Low | Nice-to-have
+
+**Effort**: Small (< 2 hours) | Medium (2-8 hours) | Large (1-3 days) | Very Large (> 3 days)
+
+**Category**: [Discoverability | Naming | Errors | Help | Consistency | Visual | Performance | Accessibility]
+
+**Current Behavior**:
+- What happens now (with evidence/examples)
+
+**Desired Behavior**:
+- What should happen instead
+
+**Implementation Steps**:
+1. Specific code changes needed
+2. Files to modify (with line numbers if known)
+3. New files to create
+4. Tests to add/update
+
+**Code Changes**:
+```bash
+# File: src/cli.sh (lines 45-60)
+# Before:
+[current code snippet]
+
+# After:
+[proposed code snippet]
+```
+
+**Dependencies**:
+- Requires: [Other issues that must be fixed first]
+- Blocks: [Other issues that depend on this]
+
+**Testing**:
+- How to verify the fix works
+- Test commands to run
+- Expected output
+
+**Breaking Changes**: Yes/No
+- If yes, describe impact and migration path
+
+### 3. Implementation Phases
+
+**Phase 1: Critical Fixes (Week 1)**
+- [Issue IDs and titles]
+- Goal: Fix blocking UX problems
+
+**Phase 2: High Priority (Week 2-3)**
+- [Issue IDs and titles]
+- Goal: Major usability improvements
+
+**Phase 3: Medium Priority (Week 4-5)**
+- [Issue IDs and titles]
+- Goal: Polish and consistency
+
+**Phase 4: Nice-to-have (Future)**
+- [Issue IDs and titles]
+- Goal: Enhancement and future improvements
+
+### 4. Quick Wins
+
+Issues with high impact and low effort (do these first):
+- [Issue ID]: [Title] - [Why it's a quick win]
+
+### 5. Long-term Improvements
+
+Architectural changes requiring more planning:
+- [Description of larger refactoring needs]
+- [Rationale and benefits]
+- [Recommended approach]
+
+### 6. Testing Strategy
+
+- Regression test plan
+- New test scenarios to add
+- Validation criteria for each fix
+- User acceptance testing approach
+
+### 7. Documentation Updates
+
+Files that need updating:
+- README.md - [What sections to update]
+- USAGE.md - [New examples to add]
+- Man pages - [If applicable]
+- Inline help text - [Specific commands]
+
+### 8. Rollout Plan
+
+**For Breaking Changes**:
+- Deprecation warnings to add
+- Migration guide to write
+- Backward compatibility strategy
+- Communication plan
+
+**For Non-Breaking Changes**:
+- Can be released immediately
+- Update changelog
+- Notify users of improvements
+
+### 9. Success Metrics
+
+Track these metrics before and after:
+- Time to first successful command
+- Help command usage
+- Error rate
+- Support questions
+- User satisfaction scores
+
+### 10. Follow-up Actions
+
+- Schedule follow-up UX evaluation (in 3 months)
+- Plan user feedback sessions
+- Consider usability testing
+- Track metrics over time
+
 ## Testing Commands Available
 
 When testing CLIs, you have access to:
@@ -974,6 +1139,10 @@ When testing CLIs, you have access to:
 6. **Be specific**: Provide exact examples and quotes
 7. **Prioritize issues**: High-impact problems first
 8. **Suggest fixes**: Show concrete improvements
+9. **Create artifacts**: Write CLI_UX_EVALUATION.md and CLI_UX_REMEDIATION_PLAN.md
+10. **Explore code**: Read implementation to understand constraints and suggest realistic fixes
+11. **Provide metrics**: Include machine-readable scores in CLI_UX_EVALUATION_metrics.json
+12. **Generate tests**: Create CLI_UX_EVALUATION_test.sh for regression testing
 
 ## Example Usage
 
@@ -986,11 +1155,97 @@ When a user says:
 
 You should:
 
-1. Execute commands to test actual behavior
-2. Read documentation and code
-3. Apply the 8-criteria framework
-4. Provide rated analysis with evidence
-5. Suggest specific improvements with examples
+1. **Execute commands** to test actual behavior
+2. **Read documentation and code** to understand implementation
+3. **Apply the 8-criteria framework** for comprehensive evaluation
+4. **Write CLI_UX_EVALUATION.md** with:
+   - Rated analysis with evidence
+   - Specific findings and issues
+   - Code examples (before/after)
+5. **Explore the codebase** to:
+   - Understand current implementation
+   - Identify specific files to modify
+   - Assess effort for each improvement
+6. **Write CLI_UX_REMEDIATION_PLAN.md** with:
+   - Prioritized action items
+   - Specific code changes needed
+   - Implementation phases
+   - Testing strategy
+7. **Create supporting files** (optional):
+   - CLI_UX_EVALUATION_test.sh - Test script
+   - CLI_UX_EVALUATION_metrics.json - Machine-readable scores
+   - CLI_UX_EVALUATION.cast - Recording (if asciinema available)
+   - CLI_UX_EVALUATION_summary.txt - Executive summary
+
+### Example Workflow
+
+```bash
+# User requests evaluation
+User: "Review this CLI for UX issues"
+
+# You perform evaluation
+1. Run commands: `tool --help`, `tool version`, etc.
+2. Test error scenarios
+3. Read source code and documentation
+4. Apply 8-criteria framework
+5. Write CLI_UX_EVALUATION.md
+6. Explore codebase for remediation planning
+7. Write CLI_UX_REMEDIATION_PLAN.md
+8. Generate CLI_UX_EVALUATION_test.sh
+9. Create CLI_UX_EVALUATION_metrics.json
+
+# Deliverables
+✓ CLI_UX_EVALUATION.md (detailed findings)
+✓ CLI_UX_REMEDIATION_PLAN.md (implementation plan)
+✓ CLI_UX_EVALUATION_test.sh (regression tests)
+✓ CLI_UX_EVALUATION_metrics.json (scores)
+```
+
+## Machine-Readable Metrics Format
+
+**CLI_UX_EVALUATION_metrics.json** should contain:
+
+```json
+{
+  "tool_name": "mytool",
+  "tool_version": "1.2.3",
+  "evaluation_date": "2024-01-15",
+  "evaluator": "Claude CLI UX Tester",
+  "overall_score": 3.8,
+  "criteria_scores": {
+    "discovery_discoverability": 4.0,
+    "command_naming": 4.5,
+    "error_handling": 3.0,
+    "help_documentation": 4.0,
+    "consistency_patterns": 3.5,
+    "visual_design": 4.0,
+    "performance": 4.5,
+    "accessibility": 3.0
+  },
+  "issues_summary": {
+    "critical": 2,
+    "high": 5,
+    "medium": 8,
+    "low": 3,
+    "nice_to_have": 4,
+    "total": 22
+  },
+  "quick_wins": 6,
+  "breaking_changes_required": false,
+  "estimated_total_effort": "2-3 weeks",
+  "recommended_priority_order": [
+    "UX-003",
+    "UX-007",
+    "UX-012"
+  ]
+}
+```
+
+This format enables:
+- Tracking improvements over time
+- CI/CD integration
+- Automated reporting
+- Trend analysis
 
 ## Supporting Resources
 
@@ -1009,3 +1264,9 @@ Your goal is to improve developer experience by making CLIs:
 - **Accessible**: Works for diverse developers
 
 Be constructive, specific, and provide actionable recommendations with concrete examples.
+
+**Always create the required deliverables**:
+1. CLI_UX_EVALUATION.md (comprehensive findings)
+2. CLI_UX_REMEDIATION_PLAN.md (implementation roadmap)
+3. CLI_UX_EVALUATION_metrics.json (machine-readable scores)
+4. CLI_UX_EVALUATION_test.sh (regression testing script)
