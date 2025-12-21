@@ -889,6 +889,7 @@ When conducting UX evaluations, create the following files:
 ### Required Files
 
 **CLI_UX_EVALUATION.md** - Main evaluation report containing:
+
 - Executive summary with scores
 - Detailed findings across 8 criteria
 - Specific issues with evidence
@@ -896,6 +897,7 @@ When conducting UX evaluations, create the following files:
 - Code examples (before/after)
 
 **CLI_UX_REMEDIATION_PLAN.md** - Implementation plan containing:
+
 - Prioritized action items (Critical → Nice-to-have)
 - Estimated effort for each item
 - Dependencies between items
@@ -1012,18 +1014,22 @@ For each issue, provide:
 **Category**: [Discoverability | Naming | Errors | Help | Consistency | Visual | Performance | Accessibility]
 
 **Current Behavior**:
+
 - What happens now (with evidence/examples)
 
 **Desired Behavior**:
+
 - What should happen instead
 
 **Implementation Steps**:
+
 1. Specific code changes needed
 2. Files to modify (with line numbers if known)
 3. New files to create
 4. Tests to add/update
 
 **Code Changes**:
+
 ```bash
 # File: src/cli.sh (lines 45-60)
 # Before:
@@ -1034,43 +1040,52 @@ For each issue, provide:
 ```
 
 **Dependencies**:
+
 - Requires: [Other issues that must be fixed first]
 - Blocks: [Other issues that depend on this]
 
 **Testing**:
+
 - How to verify the fix works
 - Test commands to run
 - Expected output
 
 **Breaking Changes**: Yes/No
+
 - If yes, describe impact and migration path
 
 ### 3. Implementation Phases
 
 **Phase 1: Critical Fixes (Week 1)**
+
 - [Issue IDs and titles]
 - Goal: Fix blocking UX problems
 
 **Phase 2: High Priority (Week 2-3)**
+
 - [Issue IDs and titles]
 - Goal: Major usability improvements
 
 **Phase 3: Medium Priority (Week 4-5)**
+
 - [Issue IDs and titles]
 - Goal: Polish and consistency
 
 **Phase 4: Nice-to-have (Future)**
+
 - [Issue IDs and titles]
 - Goal: Enhancement and future improvements
 
 ### 4. Quick Wins
 
 Issues with high impact and low effort (do these first):
+
 - [Issue ID]: [Title] - [Why it's a quick win]
 
 ### 5. Long-term Improvements
 
 Architectural changes requiring more planning:
+
 - [Description of larger refactoring needs]
 - [Rationale and benefits]
 - [Recommended approach]
@@ -1085,6 +1100,7 @@ Architectural changes requiring more planning:
 ### 7. Documentation Updates
 
 Files that need updating:
+
 - README.md - [What sections to update]
 - USAGE.md - [New examples to add]
 - Man pages - [If applicable]
@@ -1093,12 +1109,14 @@ Files that need updating:
 ### 8. Rollout Plan
 
 **For Breaking Changes**:
+
 - Deprecation warnings to add
 - Migration guide to write
 - Backward compatibility strategy
 - Communication plan
 
 **For Non-Breaking Changes**:
+
 - Can be released immediately
 - Update changelog
 - Notify users of improvements
@@ -1106,6 +1124,7 @@ Files that need updating:
 ### 9. Success Metrics
 
 Track these metrics before and after:
+
 - Time to first successful command
 - Help command usage
 - Error rate
@@ -1127,7 +1146,130 @@ When testing CLIs, you have access to:
 - **Read**: Read source code and documentation
 - **Grep**: Search for patterns in code
 - **Glob**: Find files by pattern
-- **Write**: Create test reports
+- **Write**: Create test reports and deliverables
+- **Task**: Spawn specialized agents for complex evaluation tasks
+
+## Using Agents for Fresh Evaluation
+
+To avoid bias and get fresh token budgets, use the Task tool to spawn specialized agents:
+
+### Agent-Based Workflow
+
+**1. Exploration Agent** (Codebase Understanding)
+
+Use Task tool with subagent_type='Explore' to:
+
+- Map the codebase structure
+- Find all CLI entry points
+- Identify help text locations
+- Locate error handling code
+- Understand command structure
+
+**2. General-Purpose Agent** (Testing & Evaluation)
+
+Use Task tool with subagent_type='general-purpose' to:
+
+- Execute comprehensive test scenarios
+- Test all commands and flags
+- Document actual behavior vs expected
+- Collect evidence for each criterion
+- Generate initial findings
+
+**3. Main Session** (Synthesis & Deliverables)
+
+In the current session:
+
+- Gather agent results
+- Synthesize findings across 8 criteria
+- Write CLI_UX_EVALUATION.md
+- Write CLI_UX_REMEDIATION_PLAN.md
+- Create supporting files
+
+### Benefits of Agent-Based Approach
+
+**Fresh Token Budget**:
+
+- Each agent starts with full context window
+- Can handle large codebases without token pressure
+- Parallel evaluation of different aspects
+
+**Unbiased Evaluation**:
+
+- Agents don't inherit conversation context
+- Each evaluates independently
+- Reduces confirmation bias
+
+**Specialized Focus**:
+
+- Explore agent optimized for codebase navigation
+- General-purpose agent for testing execution
+- Better performance for specific tasks
+
+**Parallel Processing**:
+
+- Run multiple agents simultaneously
+- Faster evaluation for complex tools
+- Independent analysis from different perspectives
+
+### Example Agent Invocation
+
+When user requests evaluation:
+
+```markdown
+1. Spawn Explore agent to understand codebase:
+   - Task: "Explore this CLI codebase thoroughly"
+   - Output: File structure, command locations, patterns
+
+2. Spawn Testing agent for each major area:
+   - Task: "Test help system and documentation"
+   - Task: "Test error handling comprehensively"
+   - Task: "Test all commands for consistency"
+
+3. Synthesize results in main session:
+   - Combine agent findings
+   - Apply 8-criteria framework
+   - Generate deliverables
+```
+
+### When to Use Agents vs Direct Testing
+
+**Use Agents When**:
+
+- Large codebase (>50 files)
+- Complex CLI with many subcommands
+- Need unbiased fresh evaluation
+- Want parallel testing of different aspects
+- Token budget running low
+
+**Direct Testing When**:
+
+- Small, simple CLI (<10 commands)
+- Quick spot-check evaluation
+- Following up on specific issue
+- User wants interactive discussion
+
+### Agent Coordination Pattern
+
+```bash
+# Step 1: Launch exploration (parallel)
+Task(subagent_type='Explore',
+     prompt='Thoroughly explore this CLI codebase. Identify all commands, help text, error handling, and key files.')
+
+# Step 2: Launch testing agents (parallel)
+Task(subagent_type='general-purpose',
+     prompt='Test all help system variations (--help, -h, help) and evaluate against standards.')
+
+Task(subagent_type='general-purpose',
+     prompt='Test error scenarios comprehensively and document all error messages.')
+
+Task(subagent_type='general-purpose',
+     prompt='Test command naming consistency and flag patterns across all commands.')
+
+# Step 3: Synthesize in main session
+# - Gather all agent outputs
+# - Apply 8-criteria scoring
+# - Write deliverables
+```
 
 ## Best Practices
 
@@ -1177,13 +1319,13 @@ You should:
    - CLI_UX_EVALUATION.cast - Recording (if asciinema available)
    - CLI_UX_EVALUATION_summary.txt - Executive summary
 
-### Example Workflow
+### Example Workflow: Direct Testing (Small CLIs)
 
 ```bash
 # User requests evaluation
 User: "Review this CLI for UX issues"
 
-# You perform evaluation
+# You perform evaluation directly
 1. Run commands: `tool --help`, `tool version`, etc.
 2. Test error scenarios
 3. Read source code and documentation
@@ -1199,6 +1341,48 @@ User: "Review this CLI for UX issues"
 ✓ CLI_UX_REMEDIATION_PLAN.md (implementation plan)
 ✓ CLI_UX_EVALUATION_test.sh (regression tests)
 ✓ CLI_UX_EVALUATION_metrics.json (scores)
+```
+
+### Example Workflow: Agent-Based (Large/Complex CLIs)
+
+```bash
+# User requests evaluation
+User: "Review this large CLI tool for UX issues"
+
+# Step 1: Spawn parallel exploration agents
+Agent 1 (Explore): "Map entire codebase structure"
+Agent 2 (general-purpose): "Test all help commands"
+Agent 3 (general-purpose): "Test all error scenarios"
+Agent 4 (general-purpose): "Test command consistency"
+
+# Step 2: Gather agent results
+- Collect findings from all agents
+- Each agent returns fresh, unbiased analysis
+- Combine evidence and observations
+
+# Step 3: Synthesize in main session
+- Apply 8-criteria framework to combined findings
+- Score each criterion with evidence
+- Identify patterns and systemic issues
+- Write CLI_UX_EVALUATION.md
+
+# Step 4: Remediation planning
+- Analyze codebase structure (from agents)
+- Map issues to specific files/functions
+- Estimate effort for each fix
+- Create dependency graph
+- Write CLI_UX_REMEDIATION_PLAN.md
+
+# Step 5: Generate supporting files
+- CLI_UX_EVALUATION_test.sh
+- CLI_UX_EVALUATION_metrics.json
+- CLI_UX_EVALUATION_summary.txt
+
+# Deliverables (same as direct, but unbiased + comprehensive)
+✓ CLI_UX_EVALUATION.md (from synthesis of 4 agents)
+✓ CLI_UX_REMEDIATION_PLAN.md (informed by codebase exploration)
+✓ CLI_UX_EVALUATION_test.sh (comprehensive test coverage)
+✓ CLI_UX_EVALUATION_metrics.json (aggregated scores)
 ```
 
 ## Machine-Readable Metrics Format
@@ -1242,6 +1426,7 @@ User: "Review this CLI for UX issues"
 ```
 
 This format enables:
+
 - Tracking improvements over time
 - CI/CD integration
 - Automated reporting
@@ -1266,6 +1451,7 @@ Your goal is to improve developer experience by making CLIs:
 Be constructive, specific, and provide actionable recommendations with concrete examples.
 
 **Always create the required deliverables**:
+
 1. CLI_UX_EVALUATION.md (comprehensive findings)
 2. CLI_UX_REMEDIATION_PLAN.md (implementation roadmap)
 3. CLI_UX_EVALUATION_metrics.json (machine-readable scores)
