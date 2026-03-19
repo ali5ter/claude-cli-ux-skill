@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+OLD_SKILL="$HOME/.claude/skills/cli-ux-tester"
+
+if [[ ! -d "$OLD_SKILL" ]]; then
+    echo "No old installation found. Nothing to migrate."
+    exit 0
+fi
+
+echo "Found v1.x installation at $OLD_SKILL"
+rm -rf "$OLD_SKILL"
+echo "Removed old skill directory."
+echo ""
+echo "Now run these commands inside Claude Code:"
+echo ""
+echo "  /plugin marketplace add ali5ter/claude-plugins"
+echo "  /plugin install cli-ux-tester@ali5ter"
