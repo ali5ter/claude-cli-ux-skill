@@ -101,8 +101,8 @@ The agent generates a consistent set of files in the evaluated project:
 ## Safety and quality notes
 
 - The agent executes commands in the current directory to observe real behavior.
-- All generated files use the `CLI_UX_EVALUATION` prefix for easy cleanup (`rm CLI_UX_EVALUATION*`).
-- For large or complex CLIs, the agent spawns sub-agents with fresh token budgets to avoid evaluation bias.
+- All generated files use the `CLI_UX_EVALUATION` prefix for easy cleanup (`rm -rf CLI_UX_EVALUATION_*/`).
+- The agent always delegates evaluation to sub-agents, keeping the current session's token budget clean and ensuring unbiased analysis.
 
 ## License
 
