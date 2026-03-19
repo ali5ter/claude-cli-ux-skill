@@ -11,7 +11,14 @@ The agent definition lives in `agents/cli-ux-tester.md`.
 
 ```text
 agents/
-  cli-ux-tester.md        # Agent definition — edit this to change behavior
+  cli-ux-tester.md        # Agent definition — performs the evaluation
+skills/
+  cli-ux-tester/
+    SKILL.md              # Skill launcher — detects context and invokes the agent
+    testing-checklist.md  # Comprehensive testing checklist (reference for agent)
+    test-scenarios.md     # Common CLI testing scenarios (reference for agent)
+    scripts/
+      example-test.sh     # Template for automated testing
 .claude-plugin/
   plugin.json             # Plugin manifest
 README.md
@@ -31,6 +38,15 @@ Or install directly from a local checkout:
 ```text
 /plugin install /path/to/claude-cli-ux-skill
 ```
+
+## Architecture
+
+The plugin provides two components:
+
+- **Skill** (`cli-ux-tester`) — lightweight launcher that detects the target CLI, asks clarifying questions
+  if needed, then invokes the agent
+- **Agent** (`cli-ux-tester:cli-ux-tester`) — performs the full evaluation by delegating to Explore and
+  general-purpose sub-agents in parallel, then synthesizes results and writes artifacts
 
 ## Key design decisions
 
