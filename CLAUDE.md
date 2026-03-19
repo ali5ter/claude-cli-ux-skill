@@ -20,10 +20,12 @@ skills/
     scripts/
       example-test.sh     # Template for automated testing
 .claude-plugin/
-  plugin.json             # Plugin manifest
+  plugin.json             # Plugin manifest (current version: 3.0.0)
+migrate                   # Migration script — removes legacy ~/.claude/skills/cli-ux-tester/
 README.md
 CLAUDE.md                 # This file
 LICENSE
+.markdownlint.json        # Markdown lint config (120-char line length for prose)
 ```
 
 ## Installation (for development and testing)
@@ -77,6 +79,17 @@ Edit `agents/cli-ux-tester.md`. The YAML frontmatter controls:
 - `tools`: Tools the agent can use
 
 The markdown body is the agent's system prompt.
+
+## Migration (for users upgrading from v1.x or v2.x)
+
+Run the included `migrate` script to remove the legacy user skill before reinstalling:
+
+```bash
+./migrate
+```
+
+The legacy skill was at `~/.claude/skills/cli-ux-tester/`. From v3.0.0, the skill is installed exclusively
+as part of the plugin via the `skills/` directory.
 
 ## Goals
 
