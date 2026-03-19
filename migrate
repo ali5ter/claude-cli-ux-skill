@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# @file migrate
+# @brief Removes legacy cli-ux-tester skill installations from ~/.claude/skills/.
+#        Run this before installing via /plugin to avoid duplicate user skills.
+# @usage ./migrate
+# @author Alister Lewis-Bowen <alister@lewis-bowen.org>
+
+set -euo pipefail
+
+SKILL_DIR="${HOME}/.claude/skills/cli-ux-tester"
+
+echo "cli-ux-tester migration"
+echo "======================="
+echo ""
+
+if [[ -d "$SKILL_DIR" ]]; then
+    echo "Found legacy skill installation at: $SKILL_DIR"
+    rm -rf "$SKILL_DIR"
+    echo "Removed."
+else
+    echo "No legacy skill installation found. Nothing to do."
+fi
+
+echo ""
+echo "Done. Install the plugin with:"
+echo "  /plugin marketplace add ali5ter/claude-plugins"
+echo "  /plugin install cli-ux-tester@ali5ter"
