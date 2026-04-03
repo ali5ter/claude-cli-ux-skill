@@ -5,9 +5,10 @@ Install via the Claude Code plugin system (`/plugin install cli-ux-tester@ali5te
 
 ## Features
 
-- 8-criteria UX framework with 1-5 scoring per dimension
+- 11-criteria UX framework with 1-5 scoring per dimension (8 core + 3 extended criteria)
 - Active testing by executing real commands and capturing output
-- Agent-based evaluation for large or complex CLIs
+- Parallel evaluation agents for thorough, unbiased analysis
+- Persistent memory across evaluations for cross-project pattern tracking
 - Comprehensive output artifacts: evaluation report, remediation plan, metrics, and test scripts
 - Language-agnostic: evaluates user-facing behavior regardless of implementation
 
@@ -15,17 +16,17 @@ Install via the Claude Code plugin system (`/plugin install cli-ux-tester@ali5te
 
 ```text
 agents/
-  cli-ux-tester.md                 # Agent definition — performs the evaluation
+  cli-ux-tester.md                 # Agent definition — synthesizes results into scored artifacts
 skills/
   cli-ux-tester/
-    SKILL.md                       # Skill launcher — detects context and invokes the agent
-    testing-checklist.md           # Comprehensive testing checklist
+    SKILL.md                       # Skill — detects CLI, spawns evaluation agents, invokes synthesizer
+    testing-checklist.md           # Comprehensive testing checklist (11 criteria)
     test-scenarios.md              # Common CLI testing scenarios
     scripts/
       example-test.sh              # Template for automated testing
 .claude-plugin/
   plugin.json                      # Plugin manifest
-migrate                            # Migration script for v1.x users
+migrate                            # Migration script for v1.x and v2.x users
 README.md
 LICENSE
 ```
@@ -60,12 +61,14 @@ Check if this API is developer-friendly
 Evaluate the help system
 ```
 
-The skill detects which CLI to evaluate from the current directory or your message, then launches the evaluation
-agent automatically.
+The skill detects which CLI to evaluate from the current directory or your message, then runs the evaluation
+automatically.
 
 ### What gets evaluated
 
-The agent applies an 8-criteria framework, rating each dimension 1-5 with specific evidence:
+The plugin applies an 11-criteria framework, rating each dimension 1–5 with specific evidence:
+
+**Core criteria (1–8):**
 
 1. **Discovery & Discoverability** — Can users find features?
 2. **Command & API Naming** — Are names intuitive and consistent?
@@ -75,6 +78,12 @@ The agent applies an 8-criteria framework, rating each dimension 1-5 with specif
 6. **Visual Design & Output** — Is output readable and well-formatted?
 7. **Performance & Responsiveness** — Does the CLI feel fast?
 8. **Accessibility & Inclusivity** — Can diverse developers use it?
+
+**Extended criteria (9–11):**
+
+1. **Integration & Interoperability** — Does it compose with shell pipelines and standard tools?
+2. **Security & Safety** — Are destructive operations guarded and credentials handled safely?
+3. **User Guidance & Onboarding** — Does it guide new users toward their first success?
 
 ### Output artifacts
 
@@ -107,21 +116,24 @@ Clean up with: `rm -rf CLI_UX_EVALUATION_*/`
 
 ## How it works
 
-The plugin provides two components that work together:
+The plugin provides two components:
 
-- **Skill** (`cli-ux-tester`) — lightweight launcher that detects the target CLI, asks clarifying questions if
-  needed, then invokes the agent
-- **Agent** (`cli-ux-tester:cli-ux-tester`) — performs the full evaluation by delegating to specialized
-  sub-agents (Explore + general-purpose) in parallel, then synthesizes results and writes all artifacts
+- **Skill** (`cli-ux-tester`) — detects the target CLI, asks clarifying questions if needed, spawns three
+  evaluation agents in parallel (an Explore agent for codebase mapping and two test agents for help/discovery
+  and error handling), then passes all collected results to the synthesizer agent
+- **Agent** (`cli-ux-tester:cli-ux-tester`) — receives pre-collected test data and synthesizes it into a
+  scored 11-criteria evaluation, producing all four output artifacts
 
-This separation keeps the parent session's token budget clean and ensures unbiased analysis through fresh
-sub-agent contexts.
+The skill handles parallel evaluation directly because the platform does not support sub-agents spawning
+further sub-agents. The agent runs in `acceptEdits` permission mode to auto-approve artifact writes, and
+uses persistent `user`-scoped memory to accumulate cross-evaluation patterns over time.
 
 ## Safety and quality notes
 
-- The agent executes commands in the current directory to observe real behavior.
+- The evaluation agents execute commands in the current directory to observe real behavior.
 - All generated files use a timestamped directory for easy cleanup.
-- The agent always delegates evaluation to sub-agents, keeping the current session's token budget clean.
+- The synthesizer agent uses `permissionMode: acceptEdits` — file writes are auto-approved, but `Bash`
+  commands still prompt for permission.
 
 ## License
 
