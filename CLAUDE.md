@@ -94,3 +94,35 @@ as part of the plugin via the `skills/` directory.
 ## Goals
 
 Make CLI development more user-centered by providing expert UX evaluation automatically within Claude Code sessions.
+
+## Issue implementation order
+
+Issues grouped as PRs by merge strategy. Work through groups in order.
+
+### Group 1 — Safe to auto-merge (low risk, isolated changes)
+
+These are small, self-contained fixes with no architectural impact.
+
+- **#3** — Shorten skill description to ≤200 characters (`skills/cli-ux-tester/SKILL.md`)
+- **#13** — Trim agent description and move embedded XML examples out of frontmatter (`agents/cli-ux-tester.md`)
+- **#11** — Replace `eval` in `example-test.sh` with array-based command invocation (`skills/cli-ux-tester/scripts/example-test.sh`)
+- **#9** — Add `maxTurns: 40` to agent frontmatter (`agents/cli-ux-tester.md`)
+
+### Group 2 — Review before merge (moderate risk, inter-file changes)
+
+These touch the skill/agent contract or evaluation framework alignment.
+
+- **#8** — Rewrite skill's AskUserQuestion branching as a single decision tree (`skills/cli-ux-tester/SKILL.md`)
+- **#5** — Parameterize sub-agent prompts with CLI target context (`agents/cli-ux-tester.md`)
+- **#7** — Add references to `testing-checklist.md` and `test-scenarios.md` in agent prompt (`agents/cli-ux-tester.md`)
+- **#6** — Extend agent to all 11 criteria and update `metrics.json` schema
+  (coordinated change across `agents/cli-ux-tester.md` + `testing-checklist.md`)
+
+### Group 3 — Review before merge (architectural decisions)
+
+These require a decision or have wider design implications.
+
+- **#4** — Investigate sub-agent nesting limitation and restructure if needed;
+  may require moving synthesis logic to the skill or restructuring the agent layer entirely
+- **#10** — Decide on `permissionMode` strategy (balance between automation convenience and security)
+- **#12** — Decide whether cross-evaluation memory is in scope; add `memory: user` and write-guidance if yes
