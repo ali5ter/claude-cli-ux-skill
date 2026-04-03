@@ -41,28 +41,32 @@ ls main.go cmd/ 2>/dev/null
 head -50 README.md 2>/dev/null
 ```
 
-## Step 2: Ask clarifying questions
+## Step 2: Ask clarifying questions if needed
 
-If the target CLI cannot be confidently identified, use AskUserQuestion before launching the agent:
+Skip this step if the target CLI was already identified from the user's message in Step 1.
 
-**If the CLI to evaluate is unclear:**
+Otherwise, ask exactly one AskUserQuestion using the appropriate form below:
+
+**Entry point(s) detected in current directory** → ask which to evaluate:
 
 ```text
 Question: "Which CLI should I evaluate?"
 Options:
-  - [Detected entry point(s) from current directory]
-  - A command available in $PATH
-  - Other (custom path)
+  - [Each detected entry point]
+  - A different installed command (provide the name)
+  - A different path (provide the path)
 ```
 
-**If evaluating a command in $PATH, also ask:**
+**No entry points detected** → ask the user to specify:
 
 ```text
-Question: "Should I evaluate the CLI in the current directory, or a specific installed command?"
+Question: "Which CLI tool should I evaluate?"
 Options:
-  - Current directory
-  - Specific command (provide name)
+  - An installed command available in $PATH (provide the name)
+  - A path to an executable (provide the path)
 ```
+
+Proceed directly to Step 3 with whatever the user provides.
 
 ## Step 3: Launch evaluation agent
 
@@ -73,6 +77,9 @@ Pass the agent:
 - The working directory
 - The CLI entry point (command name, script path, or executable)
 - Any relevant context from the user's message (e.g., "focus on error messages", "check the help system")
+- Paths to the reference files:
+  - Use Glob (`**/testing-checklist.md`) to locate `testing-checklist.md`
+  - Use Glob (`**/test-scenarios.md`) to locate `test-scenarios.md`
 
 ## Step 4: Report results
 
