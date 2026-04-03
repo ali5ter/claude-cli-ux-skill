@@ -8,11 +8,13 @@ allowed-tools: Read, Bash, AskUserQuestion, Agent
 # CLI UX Tester
 
 This skill evaluates the usability of command-line interfaces and developer tools. It identifies the target CLI,
-asks clarifying questions if needed, then launches an agent to perform a comprehensive evaluation.
+asks clarifying questions if needed, runs three evaluation agents in parallel, then passes the collected results
+to a synthesizer agent to produce artifacts.
 
-**Architecture:** This skill acts as a lightweight launcher. It collects context, then delegates all evaluation work
-to the `cli-ux-tester:cli-ux-tester` agent, which keeps the parent session's token budget clean and ensures
-unbiased analysis.
+**Architecture:** The skill spawns all evaluation sub-agents directly (one Explore agent and two test agents in
+parallel). This works around the platform constraint that sub-agents cannot spawn further sub-agents. The
+`cli-ux-tester:cli-ux-tester` agent acts as a pure synthesizer — it receives the pre-collected test data and
+produces the scored report and artifacts.
 
 ## Step 1: Detect target CLI
 
@@ -68,20 +70,62 @@ Options:
 
 Proceed directly to Step 3 with whatever the user provides.
 
-## Step 3: Launch evaluation agent
+## Step 3: Run evaluation agents in parallel
 
-Once the target CLI is identified, launch a `cli-ux-tester:cli-ux-tester` agent with the collected context.
+Locate the reference files first:
 
-Pass the agent:
+- Use Glob (`**/testing-checklist.md`) to find `testing-checklist.md`; note the path
+- Use Glob (`**/test-scenarios.md`) to find `test-scenarios.md`; note the path
+
+Then spawn these three agents simultaneously, substituting the actual `{cli_command}` and `{working_dir}`:
+
+**Explore agent** — codebase mapping:
+
+```text
+subagent_type: Explore
+prompt: "Map the {cli_command} CLI codebase in {working_dir}. Find: all commands and subcommands,
+help text locations, error handling code, version output, README and docs files, entry point(s),
+flag/argument parsing. Return a structured summary: command tree, key file locations, patterns
+observed."
+```
+
+**Test agent A** — discovery and help:
+
+```text
+subagent_type: general-purpose
+prompt: "Test {cli_command}'s help system and discoverability (run from {working_dir}).
+Run: {cli_command} --help, {cli_command} -h, {cli_command} help, {cli_command} (no args),
+{cli_command} --version, {cli_command} -v, {cli_command} version, {cli_command} invalid-subcommand,
+{cli_command} --invalid-flag. For each subcommand found, also run: {cli_command} subcommand --help.
+Capture exact output. Note: what works, what fails, what's missing."
+```
+
+**Test agent B** — error handling and consistency:
+
+```text
+subagent_type: general-purpose
+prompt: "Test {cli_command}'s error handling and consistency (run from {working_dir}).
+Run: commands with missing required args, invalid flag values, nonexistent files, wrong syntax.
+Check whether flag names are consistent across subcommands (--verbose always means the same thing).
+Check exit codes with echo $?. Capture exact outputs. Note every inconsistency."
+```
+
+Wait for all three agents to complete and collect their full outputs before proceeding.
+
+## Step 4: Launch synthesizer agent
+
+Once all evaluation results are collected, launch the `cli-ux-tester:cli-ux-tester` agent.
+
+Pass:
 
 - The working directory
 - The CLI entry point (command name, script path, or executable)
-- Any relevant context from the user's message (e.g., "focus on error messages", "check the help system")
-- Paths to the reference files:
-  - Use Glob (`**/testing-checklist.md`) to locate `testing-checklist.md`
-  - Use Glob (`**/test-scenarios.md`) to locate `test-scenarios.md`
+- Any relevant context from the user's message (e.g., "focus on error messages")
+- The full output from all three evaluation agents (Explore, Test A, Test B)
+- Path to `testing-checklist.md`
+- Path to `test-scenarios.md`
 
-## Step 4: Report results
+## Step 5: Report results
 
 When the agent completes, inform the user:
 
