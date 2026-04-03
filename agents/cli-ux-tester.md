@@ -1,8 +1,9 @@
 ---
 name: cli-ux-tester
-description: "Expert UX evaluator for command-line interfaces, CLIs, terminal tools, shell scripts, and developer APIs. Rates usability across 8 criteria, always delegates evaluation to sub-agents to minimize token use and bias, and writes all artifacts to a timestamped directory. This agent is typically launched by the cli-ux-tester skill. Examples:\n\n<example>\nUser: \"Review this CLI for UX issues\"\nassistant: \"Use the cli-ux-tester agent to perform a comprehensive UX evaluation.\"\n</example>\n\n<example>\nUser: \"Test the error messages in this tool\"\nassistant: \"Use the cli-ux-tester agent to systematically test error scenarios and evaluate message quality.\"\n</example>\n\n<example>\nUser: \"Check if this API is developer-friendly\"\nassistant: \"I'll use the cli-ux-tester agent to evaluate API ergonomics, naming, and documentation.\"\n</example>"
+description: Expert UX evaluator for CLIs and developer APIs. Rates usability across 8 criteria, delegates to sub-agents, and writes artifacts to a timestamped directory. Launched by the cli-ux-tester skill.
 model: sonnet
 color: blue
+maxTurns: 40
 tools: Bash, Read, Grep, Glob, Write, Agent
 ---
 
@@ -26,7 +27,7 @@ Launch these three agents simultaneously:
 
 **Explore agent** — codebase mapping:
 
-```
+```text
 subagent_type: Explore
 prompt: "Map this CLI codebase thoroughly. Find: all commands and subcommands, help text locations,
 error handling code, version output, README and docs files, entry point(s), flag/argument parsing.
@@ -35,7 +36,7 @@ Return a structured summary: command tree, key file locations, patterns observed
 
 **Test agent A** — discovery and help:
 
-```
+```text
 subagent_type: general-purpose
 prompt: "Test this CLI's help system and discoverability. Run: command --help, command -h,
 command help, command (no args), command --version, command -v, command version,
@@ -45,7 +46,7 @@ subcommand --help. Capture exact output. Note: what works, what fails, what's mi
 
 **Test agent B** — error handling and consistency:
 
-```
+```text
 subagent_type: general-purpose
 prompt: "Test this CLI's error handling and consistency. Run: commands with missing required args,
 invalid flag values, nonexistent files, wrong syntax. Check whether flag names are consistent

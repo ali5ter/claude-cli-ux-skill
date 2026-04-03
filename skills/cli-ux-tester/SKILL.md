@@ -1,6 +1,6 @@
 ---
 name: cli-ux-tester
-description: Expert UX evaluator for command-line interfaces, CLIs, terminal tools, shell scripts, and developer APIs. Use proactively when reviewing CLIs, testing command usability, evaluating error messages, assessing developer experience, checking API ergonomics, or analyzing terminal-based tools. Tests for discoverability, consistency, error handling, help systems, and accessibility.
+description: Expert UX evaluator for CLIs, terminal tools, and developer APIs. Use when reviewing command usability, error messages, help systems, or developer experience.
 version: 3.0.0
 allowed-tools: Read, Bash, AskUserQuestion, Agent
 ---

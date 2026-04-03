@@ -52,7 +52,8 @@ run_test() {
 
     # Run command and capture output and exit code
     set +e
-    output=$(eval "$command" 2>&1)
+    read -ra cmd_array <<< "$command"
+    output=$("${cmd_array[@]}" 2>&1)
     exit_code=$?
     set -e
 
